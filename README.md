@@ -17,6 +17,12 @@ pod 'SHJavascriptInterface', '~>1.0'
 
 ### 2.
 
+引入头文件:
+
+```objective-c
+import "UIWebView+JavascriptInterface.h"
+```
+
 简化JS调用iOS原生方法时的麻烦过程，在初始化时添加javascriptInterface:
 
 ```objective-c
