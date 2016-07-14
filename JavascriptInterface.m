@@ -10,8 +10,7 @@
 #import "objc/runtime.h"
 #import "StringUtil.h"
 
-@implementation JavascriptInterface{
-}
+@implementation JavascriptInterface
 
 - (BOOL) validateInterfaceName:(NSString *) name{
     return name != nil && [name stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].length != 0;

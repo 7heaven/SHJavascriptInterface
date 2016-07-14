@@ -7,10 +7,10 @@
 //
 
 #import "StringUtil.h"
-#include <map>
-#include <string>
 
-NSArray * allRangesOfString(NSString *substring, NSString *string){
+@implementation StringUtil
+
++ (NSArray *) allRangesOfString:(NSString *) string forSubString:(NSString *) substring{
     NSMutableArray *ranges = [[NSMutableArray alloc] init];
     NSRange searchRange = NSMakeRange(0,string.length);
     NSRange foundRange;
@@ -30,12 +30,10 @@ NSArray * allRangesOfString(NSString *substring, NSString *string){
     return ranges;
 }
 
-NSDictionary * getUrlParams(NSString * url){
++ (NSDictionary *) getUrlParams:(NSString *) urlString{
+    NSMutableDictionary *pairs = [[NSMutableDictionary alloc] init];
     
-    //获取url中最外层的引号
-    std::map<int, int> pairs;
-    
-    const unsigned long urlLength = [url length];
+    const unsigned long urlLength = [urlString length];
     unsigned char * got = (unsigned char *)malloc(urlLength * sizeof(unsigned char));
     int * gotIndex = (int *) malloc(urlLength * sizeof(int));
     memset(got, 0, sizeof(unsigned char) * urlLength);
@@ -43,14 +41,14 @@ NSDictionary * getUrlParams(NSString * url){
     int gotCursor = 0;
     //遍历url找到所有单引号和双引号的pair，并放入pairs map内(这个过程会忽略引号嵌套，只取最外层)
     for(int i = 0; i < urlLength; i++){
-        const unsigned char c = [url characterAtIndex:i];
+        const unsigned char c = [urlString characterAtIndex:i];
         if(c == '\'' || c == '\"'){
             if(got[gotCursor - 1] == c){
                 gotCursor--;
                 
                 //gotCursor为零则表示已经找到最外层引号的pair,存入pairs中
                 if(gotCursor == 0){
-                    pairs[gotIndex[gotCursor]] = i + 1;
+                    [pairs setObject:@(i + 1) forKey:@(gotIndex[gotCursor])];
                 }
             }else{
                 got[gotCursor] = c;
@@ -65,12 +63,17 @@ NSDictionary * getUrlParams(NSString * url){
     free(gotIndex);
     
     //把引号内容替换掉，以方便做参数的拆分
-    NSMutableString *replacedUrl = [url mutableCopy];
-    for (auto it = pairs.crbegin(); it != pairs.crend(); ++it) {
-        char *replaceChars =  (char *) malloc(it->second - it->first + 1);
-        memset(replaceChars, '0', sizeof(char) * it->second - it->first);
-        replaceChars[it->second - it->first] = '\0';
-        [replacedUrl replaceCharactersInRange:NSMakeRange(it->first, it->second - it->first) withString:[NSString stringWithCString:replaceChars encoding:NSUTF8StringEncoding]];
+    NSMutableString *replacedUrl = [urlString mutableCopy];
+    unsigned long length = pairs.allKeys.count;
+    for(int i = 0; i < length; i++){
+        NSNumber *key = pairs.allKeys[i];
+        NSNumber *value = pairs[key];
+        
+        int size = [value intValue] - [key intValue];
+        char *replaceChars = (char *) malloc(size + 1);
+        memset(replaceChars, '0', sizeof(char) * size);
+        replaceChars[size] = '\0';
+        [replacedUrl replaceCharactersInRange:NSMakeRange([key intValue], size) withString:[NSString stringWithCString:replaceChars encoding:NSUTF8StringEncoding]];
     }
     
     NSRange rangeOfQuestionMark = [replacedUrl rangeOfString:@"?" options:NSBackwardsSearch];
@@ -78,9 +81,9 @@ NSDictionary * getUrlParams(NSString * url){
     //根据替换后的url查找需要拆分的位置，并对原始url进行拆分
     if(rangeOfQuestionMark.location != NSNotFound){
         NSString *replacedQuery = [replacedUrl substringFromIndex:rangeOfQuestionMark.location + 1];
-        NSString *query = [url substringFromIndex:rangeOfQuestionMark.location + 1];
+        NSString *query = [urlString substringFromIndex:rangeOfQuestionMark.location + 1];
         
-        NSArray *allRangesOfAndMark = allRangesOfString(@"&", replacedQuery);
+        NSArray *allRangesOfAndMark = [self allRangesOfString:replacedQuery forSubString:@"&"];
         if(allRangesOfAndMark && allRangesOfAndMark.count > 0){
             NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
             
@@ -120,12 +123,6 @@ NSDictionary * getUrlParams(NSString * url){
     }
     
     return nil;
-}
-
-@implementation StringUtil
-
-+ (NSDictionary *) getUrlParams:(NSString *) urlString{
-    return getUrlParams(urlString);
 }
 
 @end

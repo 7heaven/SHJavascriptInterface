@@ -12,8 +12,8 @@
 
 @interface JavascriptInterface : NSObject
 
-@property (weak, nonatomic) id<IWebView> webView;
-@property (weak, nonatomic) id<InterfaceProvider> interfaceProvider;
+@property (unsafe_unretained, nonatomic) id<IWebView> webView;
+@property (unsafe_unretained, nonatomic) id<InterfaceProvider> interfaceProvider;
 
 /**
  * @brief javascriptinterface名称，JS端调用的时候格式为{interfaceName}.{方法名}\n 例如:当前interfaceName为"nativeCommon", 方法为"callNative", 则JS的调用方式为nativeCommon.callNative();
