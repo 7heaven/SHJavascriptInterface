@@ -1,10 +1,21 @@
-## JavascriptInterface
+# JavascriptInterface
 
 ***
+## 使用
+
+***
+
+### 1.
+
 使用pod添加到项目中:
+
 ```
 pod 'SHJavascriptInterface', '~>1.0'
 ```
+
+
+
+### 2.
 
 简化JS调用iOS原生方法时的麻烦过程，在初始化时添加javascriptInterface:
 
