@@ -86,7 +86,8 @@
     JavascriptInterface *_javascriptInterface = [self getJavascriptInterface];
     
     id<UIWebViewDelegate> srcDelegate = [self getSrcDelegate];
-    if((_javascriptInterface == nil || (_javascriptInterface != nil && ![_javascriptInterface handleInjectedJSMethod:request.URL])) && srcDelegate != nil){
+    if((_javascriptInterface == nil || (_javascriptInterface != nil && ![_javascriptInterface handleInjectedJSMethod:request.URL])) &&
+       srcDelegate != nil && [srcDelegate respondsToSelector:@selector(webView:shouldStartLoadWithRequest:navigationType:)]){
         return [srcDelegate webView:webView shouldStartLoadWithRequest:request navigationType:navigationType];
     }
     
@@ -97,24 +98,28 @@
     if(_javascriptInterface != nil) [_javascriptInterface injectJSMethod];
     
     id<UIWebViewDelegate> srcDelegate = [self getSrcDelegate];
-    if(srcDelegate != nil){
+    if(srcDelegate != nil && [srcDelegate respondsToSelector:@selector(webViewDidStartLoad:)]){
         [srcDelegate webViewDidStartLoad:webView];
     }
     
 }
 - (void)webViewDidFinishLoad:(UIWebView *)webView{
     id<UIWebViewDelegate> srcDelegate = [self getSrcDelegate];
-    if(srcDelegate != nil){
+    if(srcDelegate != nil && [srcDelegate respondsToSelector:@selector(webViewDidFinishLoad:)]){
         [srcDelegate webViewDidFinishLoad:webView];
     }
     
 }
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(nullable NSError *)error{
     id<UIWebViewDelegate> srcDelegate = [self getSrcDelegate];
-    if(srcDelegate != nil){
+    if(srcDelegate != nil && [srcDelegate respondsToSelector:@selector(webView:didFailLoadWithError:)]){
         [srcDelegate webView:webView didFailLoadWithError:error];
     }
     
+}
+
+- (NSString *) provideJS2NativeCallForMessage:(NSString *) message{
+    return message;
 }
 
 - (NSString *) evaluatingJavascript:(NSString *)script{

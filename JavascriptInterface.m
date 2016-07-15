@@ -150,7 +150,7 @@
                                 "var ret = %@.retValue;"
                                 "if(ret){"
                                 "return ret;"
-                                "}}", locationString, interfaceName]];
+                                "}}", [self.webView provideJS2NativeCallForMessage:locationString], interfaceName]];
     
     return resultString;
 }
