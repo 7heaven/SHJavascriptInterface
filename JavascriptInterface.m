@@ -142,6 +142,7 @@
     }
     
     [resultString appendString:[NSString stringWithFormat:@"){"
+                                "%@.retValue = null;"
                                 "var iframe = document.createElement(\"IFRAME\");"
                                 "iframe.setAttribute(\"src\", %@);"
                                 "document.documentElement.appendChild(iframe);"
@@ -150,7 +151,7 @@
                                 "var ret = %@.retValue;"
                                 "if(ret){"
                                 "return ret;"
-                                "}}", [self.webView provideJS2NativeCallForMessage:locationString], interfaceName]];
+                                "}}", interfaceName, [self.webView provideJS2NativeCallForMessage:locationString], interfaceName]];
     
     return resultString;
 }

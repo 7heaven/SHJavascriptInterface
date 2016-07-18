@@ -12,7 +12,7 @@
 使用pod添加到项目中:
 
 ```
-pod 'SHJavascriptInterface', '~>1.0'
+pod 'SHJavascriptInterface', '~>1.02'
 ```
 
 
