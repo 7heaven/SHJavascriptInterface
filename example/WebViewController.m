@@ -23,6 +23,10 @@
     
     _webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 50, self.view.bounds.size.width, self.view.bounds.size.height)];
     _webView.delegate = self;
+    
+    //给webView增加javascriptInterface，javascriptInterface提供JS需要调用的对应方法
+    //这边的javascriptInterface名称会在JS里面生成相同名称的对象,在JS里面调用原生的时候就可以写成"nativeCommon.xxxx()"
+    //注意这边javascriptInterface提供的方法都必须是以javascriptInterface为target能调用到的方法
     [_webView addJavascriptInterface:self forName:@"nativeCommon"];
     
     [self.view addSubview:_webView];
@@ -43,8 +47,6 @@
 }
 
 - (BOOL) webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType{
-    
-    NSString *url = request.URL.absoluteString;
     
     NSLog(@"webView original:%s", __FUNCTION__);
     
@@ -71,6 +73,8 @@
     return [input stringByAppendingString:@"-modified-by-native"];
 }
 
+//所有需要提供给JS调用的方法都在这边定义，前面的名称为js直接调用的方法名，后面是对应的原生的selector
+//例如webView addJavascriptInterface方法用的名称是nativeCommon,那在JS里面就可以使用"nativeCommon.callNative();"来调用对应的原生的方法nativeCaller:
 - (NSDictionary<NSString *, NSValue *> *) javascriptInterfaces{
     return @{
              @"callNative" : [NSValue valueWithPointer:@selector(nativeCaller:)]
