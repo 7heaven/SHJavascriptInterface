@@ -1,4 +1,5 @@
 [![license](https://img.shields.io/dub/l/vibe-d.svg?maxAge=2592000)]()
+![cocoapdos](https://img.shields.io/cocoapods/v/SHJavascriptInterface.svg?style=flat)
 
 # JavascriptInterface
 
